@@ -1,7 +1,7 @@
 # vue-nest-assesment
 
 - Run following command to run project
-  Old version:
+- Old version:
     docker-compose up --build
-  New version
+- New version
     docker compose up --build
