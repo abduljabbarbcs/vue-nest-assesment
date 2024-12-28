@@ -1,0 +1,74 @@
+services:
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      # container_name: vuejs-app
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_BASE_URL: http://localhost:3000
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      # container_name: nestjs-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - mongodb
+      - redis
+    environment:
+      NODE_ENV: development
+      TYPEORM_CONNECTION: postgres
+      TYPEORM_HOST: postgres
+      TYPEORM_PORT: 5432
+      TYPEORM_USERNAME: admin
+      TYPEORM_PASSWORD: postgres
+      TYPEORM_DATABASE: wallet
+      TYPEORM_SCHEMA: public
+      TYPEORM_ENTITIES: dist/**/*.entity{.ts,.js}
+      TYPEORM_MAX_QUERY_EXECUTION_TIME: 30
+      TYPEORM_MIGRATIONS: ./dist/migrations/*.ts
+      TYPEORM_MIGRATIONS_RUN: 'true'
+      TYPEORM_MIGRATIONS_DIR: ./src/migrations/
+      TYPEORM_MIGRATIONS_TABLE_NAME: migrations
+      JWT_EXPIRY: 1h
+      JWT_SECRET: 68E74AA91ABF8D68A6846F45E183B
+      REDIS_PORT: 6379
+      REDIS_HOST: redis
+      REDIS_TTL: 3600
+      MONGODB_HOST: mongodb
+      MONGODB_USER: muhammadjabbar
+      MONGODB_PASSWORD: RQBqktntMqwKDh4P
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: wallet
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongo:6
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: muhammadjabbar
+      MONGO_INITDB_ROOT_PASSWORD: RQBqktntMqwKDh4P
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379"
+
+volumes:
+  postgres_data:
